@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Community Solar Lantern Rental — Kiosk Console</title>
+<style>
+:root{--sAv:#D7F1DF;--sAvT:#1B6B38;--sCh:#FFE7A3;--sChT:#7A5200;--sRp:#C0392B;--sLo:#4E5A5E;--bg:#F6F7F7;--card:#fff;--ink:#1D2B30;--mid:#667378;--line:#DDE3E4;--acc:#14797A;--accL:#EAF3F3;--warn:#B4540A;--warnL:#FDF1E4;--bad:#B23B2B;--badL:#FBEAE7;--rest:#E9EDEE;
+--hf:system-ui,'Segoe UI',Arial,sans-serif;--bf:system-ui,'Segoe UI',Arial,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--sAv:#1D4B2F;--sAvT:#8FE3AE;--sCh:#5C4710;--sChT:#FFD970;--sRp:#D2493A;--sLo:#5C6B70;--bg:#10181B;--card:#182226;--ink:#E6EEEF;--mid:#93A4A8;--line:#2A3A3F;--accL:#183436;--warnL:#33261A;--badL:#38211E;--rest:#223035;--acc:#3FB0B0}}
+:root[data-theme="dark"]{--sAv:#1D4B2F;--sAvT:#8FE3AE;--sCh:#5C4710;--sChT:#FFD970;--sRp:#D2493A;--sLo:#5C6B70;--bg:#10181B;--card:#182226;--ink:#E6EEEF;--mid:#93A4A8;--line:#2A3A3F;--accL:#183436;--warnL:#33261A;--badL:#38211E;--rest:#223035;--acc:#3FB0B0}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--bf)}
+h1,h2{margin:0;font-weight:700}h1{font-size:24px}h2{font-size:18px;margin-bottom:4px}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:20px 18px}
+header div,main{max-width:1000px;margin:0 auto}header p{margin:4px 0 0;color:var(--mid);max-width:62ch}
+main{padding:18px;display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;grid-column:span 12}
+.s5{grid-column:span 5}.s7{grid-column:span 7}.s6{grid-column:span 6}
+@media(max-width:820px){.s5,.s7,.s6{grid-column:span 12}}
+.sub{color:var(--mid);font-size:13px;margin:0 0 12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--bg);border-radius:6px;padding:8px 12px}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--mid)}
+.stat.r b{color:var(--bad)}
+.rack{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+@media(max-width:600px){.rack{grid-template-columns:repeat(5,1fr)}}
+.lt{padding:9px 0;border-radius:6px;text-align:center;font-size:13px;font-weight:600;background:var(--rest);color:var(--mid)}
+.lt i{display:none}
+.lt.avail{background:var(--sAv);color:var(--sAvT)}.lt.rent{background:var(--acc);color:#fff}
+.lt.charge{background:var(--sCh);color:var(--sChT)}.lt.maint{background:var(--sRp);color:#fff}.lt.lost{background:var(--sLo);color:#fff;text-decoration:line-through}
+.key{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mid);margin-top:10px}
+.key span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;background:var(--c)}
+.journey{margin:12px 0 0;padding:0;list-style:none;font-size:14px;color:var(--mid)}.journey b{color:var(--ink)}
+label{display:block;font-weight:600;font-size:13px;margin-top:11px}
+input,select,button{font:inherit;width:100%;padding:10px;margin-top:5px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+input[type=checkbox]{width:auto;margin:0 8px 0 0}label.ck{font-weight:400;display:flex;align-items:center;margin-top:9px;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{cursor:pointer;background:var(--acc);color:#fff;border:0;font-weight:600;margin-top:14px}
+button.sec{background:var(--card);color:var(--acc);border:1px solid var(--acc);margin-top:0;width:auto;padding:5px 12px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--warn);outline-offset:1px}
+.quote{background:var(--bg);padding:10px 12px;border-radius:6px;margin-top:12px;font-size:14px}
+.msg{padding:10px 12px;border-radius:6px;margin-top:12px;background:var(--accL);font-size:14px}.msg.bad{background:var(--badL)}.msg:empty{display:none}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--mid);font-weight:600}
+.tw{overflow-x:auto}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.empty{color:var(--mid);font-size:14px;padding:8px 0}
+input[type=range]{padding:0;border:0}.chips{display:flex;gap:8px;margin-top:8px}
+.big{font-size:24px;font-weight:700}
+</style></head><body>
+<header><div><h1>Community Solar Lantern Rental</h1>
+<p>Kiosk console for the 20-lantern pool. We sell access to light, not lanterns: lanterns go out charged and come back inspected.</p></div></header>
+<main>
+<section class="card"><h2>Lantern pool</h2><p class="sub">Each lantern is serial-numbered, so every rental record shows who holds which one.</p>
+<div class="stats" id="stats"></div><div class="rack" id="rack"></div>
+<div class="key"><span style="--c:var(--sAv)">Ready</span><span style="--c:var(--acc)">On rent</span><span style="--c:var(--sCh)">Recharging</span><span style="--c:var(--sRp)">Needs repair</span><span style="--c:var(--sLo)">Lost</span></div>
+<ul class="journey" id="journey"></ul></section>
+
+<section class="card s5"><h2>Issue a lantern</h2><p class="sub">Register, verify, collect rent and deposit.</p>
+<label for="name">Customer name</label><input id="name" autocomplete="off">
+<div class="two"><div><label for="mobile">Mobile number</label><input id="mobile" inputmode="numeric" maxlength="10" placeholder="10 digits"></div>
+<div><label for="days">Rental days</label><input id="days" type="number" min="1" max="14" value="2"></div></div>
+<label for="ref">Local address or reference</label><input id="ref" placeholder="Needed for unfamiliar customers">
+<label for="lantern">Lantern</label><select id="lantern"></select>
+<label class="ck"><input id="verified" type="checkbox">ID and basic details checked</label>
+<label class="ck"><input id="emerg" type="checkbox">Emergency request (may use the reserve)</label>
+<div class="quote" id="quote"></div>
+<button id="issue">Issue lantern</button><div class="msg" id="startMsg" role="status"></div></section>
+
+<section class="card s7"><h2>On rent</h2><p class="sub">Choose a lantern to check it back in.</p><div id="active"></div>
+<h2 style="margin-top:18px">Return and inspection</h2>
+<div class="two"><div><label for="cond">Condition</label><select id="cond"><option value="good">Good, no damage</option><option value="minor">Minor damage (₹100)</option><option value="major">Major damage (₹300)</option><option value="lost">Not returned / lost</option></select></div>
+<div><label for="late">Days late</label><input id="late" type="number" min="0" value="0"></div></div>
+<div class="quote" id="retQuote">Pick a lantern above to see the deposit settlement.</div>
+<button id="ret">Complete return</button><div class="msg" id="retMsg" role="status"></div>
+<h2 style="margin-top:18px">Charging and repair queue</h2><div id="queue"></div></section>
+
+<section class="card s6"><h2>Money so far</h2><p class="sub">Deposits are held for customers, so they are never counted as income.</p><div id="money"></div></section>
+
+<section class="card s6"><h2>Would this pay back?</h2><p class="sub">Move the slider to test utilisation. Running costs are an assumption.</p>
+<label for="util">Rental days per lantern per month: <b id="utilV"></b></label><input id="util" type="range" min="3" max="25" value="12">
+<div class="chips"><button class="sec" data-d="10">10 days</button><button class="sec" data-d="15">15 days</button><button class="sec" data-d="20">20 days</button></div>
+<label for="run">Monthly running costs (power, attendant, kiosk), ₹</label><input id="run" type="number" min="0" value="3000">
+<div id="calc" style="margin-top:12px"></div></section>
+
+<section class="card"><h2>Rental record</h2><div class="tw"><table><thead><tr><th>Lantern</th><th>Customer</th><th>Event</th><th>Rent / fees</th><th>Deposit</th></tr></thead><tbody id="ledger"></tbody></table></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),R=n=>'₹'+Math.round(n).toLocaleString('en-IN'),E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RENT=30,DEP=300,RESERVE=2,STEPS=['Need arises','Kiosk visit','Registration','Deposit + rent','Lantern issued','In use','Returned','Condition checked','Deposit refunded','Recharge and care','Available again'];
+const DMG={good:0,minor:100,major:300,lost:300};
+let S,sel=null;
+function fresh(){S={L:Array.from({length:20},(_,i)=>({id:'L-'+String(i+1).padStart(3,'0'),st:'avail',r:null})),log:[],cust:{},rev:{rent:0,late:0,kept:0,ref:0,rd:0},stage:0};
+ const a=(i,n,m,d)=>{S.L[i].st='rent';S.L[i].r={name:n,mobile:m,days:d,rent:d*RENT,free:0};S.rev.rent+=d*RENT;S.rev.rd+=d};
+ a(3,'Example User','9876500001',2);a(10,'Ramesh Patil','9876500002',3);S.L[6].st='charge';S.stage=5}
+function save(){try{localStorage.setItem('lantern-kiosk',JSON.stringify(S))}catch(e){}}
+function load(){try{const v=localStorage.getItem('lantern-kiosk');if(v){S=JSON.parse(v);return}}catch(e){}fresh()}
+const cnt=s=>S.L.filter(l=>l.st===s).length;
+function quote(){const d=Math.max(1,Math.min(14,+$('days').value||1)),m=$('mobile').value.trim(),c=S.cust[m];
+ const free=c&&c.n>0&&c.n%5===0?1:0,rent=(d-free)*RENT;let t=`Collect <b>${R(rent)}</b> rent + <b>${R(DEP)}</b> refundable deposit = <b>${R(rent+DEP)}</b>.`;
+ if(free)t+=' Loyalty reward applied: one rental day free.';
+ if(c&&c.days+d>30)t+=`<br>This customer would pass 30 rental days in total. Buying a ₹900 lantern costs less, so say so honestly.`;
+ $('quote').innerHTML=t;return{d,rent,free}}
+function render(){
+ const av=cnt('avail'),rn=cnt('rent'),ru=S.rev.rd/Math.max(1,20-cnt('lost'))/30;
+ $('stats').innerHTML=`<div class="stat"><b>${av}</b><span>ready to rent</span></div><div class="stat"><b>${rn}</b><span>on rent</span></div><div class="stat"><b>${cnt('charge')+cnt('maint')}</b><span>charging or in repair</span></div><div class="stat ${av<=RESERVE?'r':''}"><b>${Math.max(0,Math.min(av,RESERVE))} of ${RESERVE}</b><span>emergency reserve</span></div>`;
+ $('rack').innerHTML=S.L.map(l=>`<div class="lt ${l.st}" title="${l.id}: ${l.st}"><i></i>${l.id.slice(2)}</div>`).join('');
+ $('journey').innerHTML='<li>Current step: <b>'+STEPS[S.stage]+'</b>'+(S.stage<10?'. Next: '+STEPS[S.stage+1]+'.':'.')+'</li>';
+ $('lantern').innerHTML=S.L.filter(l=>l.st==='avail').map(l=>`<option>${l.id}</option>`).join('')||'<option value="">None ready</option>';
+ const act=S.L.filter(l=>l.st==='rent');
+ $('active').innerHTML=act.length?act.map(l=>`<div class="row"><span><b>${l.id}</b> with ${E(l.r.name)}, ${l.r.days} day${l.r.days>1?'s':''}</span><button class="sec" data-id="${l.id}"${sel===l.id?' style="background:var(--accL)"':''}>Check in</button></div>`).join(''):'<div class="empty">No lanterns out. Issue one to start a rental.</div>';
+ const q=S.L.filter(l=>l.st==='charge'||l.st==='maint');
+ $('queue').innerHTML=q.length?q.map(l=>`<div class="row"><span><b>${l.id}</b> ${l.st==='charge'?'recharging':'needs repair'}</span><button class="sec" data-q="${l.id}">${l.st==='charge'?'Mark charged':'Mark repaired and charged'}</button></div>`).join(''):'<div class="empty">Nothing waiting. Returned lanterns appear here.</div>';
+ const lost=cnt('lost'),inc=S.rev.rent+S.rev.late,held=act.length*DEP;
+ $('money').innerHTML=`<div class="stats"><div class="stat"><b>${R(inc)}</b><span>rental income (rent + late fees)</span></div><div class="stat"><b>${R(held)}</b><span>deposits held, not income</span></div></div>
+ <table><tr><td>Rent collected</td><td>${R(S.rev.rent)}</td></tr><tr><td>Late-return fees</td><td>${R(S.rev.late)}</td></tr><tr><td>Deposits kept for damage or loss</td><td>${R(S.rev.kept)}</td></tr><tr><td>Deposits refunded</td><td>${R(S.rev.ref)}</td></tr><tr><td>Utilisation this session (${S.rev.rd} rental days)</td><td>${(ru*100).toFixed(1)}%</td></tr><tr><td>Lanterns lost (₹900 each to replace)</td><td>${lost}${lost?' = '+R(lost*900):''}</td></tr></table>`;
+ $('ledger').innerHTML=S.log.length?S.log.map(r=>`<tr><td>${r[0]}</td><td>${E(r[1])}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No activity yet.</td></tr>';
+ quote();retQuote();calc()}
+function retQuote(){const l=S.L.find(x=>x.id===sel);if(!l){$('retQuote').innerHTML='Pick a lantern above to see the deposit settlement.';return}
+ const late=Math.max(0,+$('late').value||0)*RENT,d=DMG[$('cond').value],ref=Math.max(0,DEP-late-d),short=Math.max(0,late+d-DEP);
+ $('retQuote').innerHTML=`${l.id}: late fee ${R(late)}, damage or loss charge ${R(d)}. <b>Refund ${R(ref)}</b> of ${R(DEP)}.${short?` Customer owes ${R(short)} more.`:''}${$('cond').value==='lost'?' A lost lantern costs ₹900 against the ₹300 kept, so the gap comes from the loss allowance.':''}`}
+function calc(){const d=+$('util').value,run=+$('run').value||0;$('utilV').textContent=d+' ('+Math.round(d/30*100)+'% utilisation)';
+ const rev=20*d*RENT,fixed=2900/12,con=rev-fixed-run,pb=con>0?18000/con:null;
+ $('calc').innerHTML=`<table><tr><td>Monthly rental revenue (20 × ${d} × ₹30)</td><td><b>${R(rev)}</b></td></tr><tr><td>Maintenance + loss allowance (₹2,900 ÷ 12)</td><td>− ${R(fixed)}</td></tr><tr><td>Running costs (assumed)</td><td>− ${R(run)}</td></tr><tr><td><b>Monthly contribution</b></td><td><b>${R(con)}</b></td></tr></table>
+ <p class="big" style="margin:12px 0 2px">${pb?pb.toFixed(1)+' months':'No payback'}</p><span class="sub">${pb?'to recover the ₹18,000 invested. Indicative only, not a guaranteed profit.':'at this level of use, costs are higher than revenue.'}</span>`}
+$('issue').onclick=()=>{const m=$('msg'),o=$('startMsg'),name=$('name').value.trim(),mob=$('mobile').value.trim(),id=$('lantern').value,ref=$('ref').value.trim(),q=quote(),av=cnt('avail'),c=S.cust[mob];
+ const bad=t=>{o.className='msg bad';o.innerHTML=t};
+ if(!name||!/^\d{10}$/.test(mob))return bad('Enter the customer name and a 10-digit mobile number.');
+ if(!$('verified').checked)return bad('Check ID and basic details before issuing a lantern.');
+ if(!c&&!ref)return bad('New customer: add a local address or reference.');
+ if(!id)return bad('No charged lanterns are ready. Check the charging queue.');
+ if(av<=RESERVE&&!$('emerg').checked)return bad(`Only ${av} charged lanterns remain, which is the emergency reserve. Tick "Emergency request" to issue one.`);
+ const l=S.L.find(x=>x.id===id);l.st='rent';l.r={name,mobile:mob,days:q.d,rent:q.rent,free:q.free};
+ S.rev.rent+=q.rent;S.rev.rd+=q.d;S.cust[mob]=S.cust[mob]||{n:0,days:0};S.cust[mob].days+=q.d;
+ S.log.unshift([id,name,'Issued '+q.d+'d',R(q.rent),R(DEP)+' held']);S.stage=5;
+ o.className='msg';o.innerHTML=`${id} issued to ${E(name)}. Collected ${R(q.rent+DEP)}. Record saved.`;
+ ['name','mobile','ref'].forEach(k=>$(k).value='');$('verified').checked=false;$('emerg').checked=false;save();render()};
+$('ret').onclick=()=>{const o=$('retMsg'),l=S.L.find(x=>x.id===sel);if(!l){o.className='msg bad';o.innerHTML='Pick a lantern to check in first.';return}
+ const cond=$('cond').value,late=Math.max(0,+$('late').value||0)*RENT,d=DMG[cond],ref=Math.max(0,DEP-late-d);
+ S.rev.late+=late;S.rev.kept+=Math.min(d,DEP);S.rev.ref+=ref;
+ const c=S.cust[l.r.mobile];if(c&&cond!=='lost')c.n++;
+ l.st=cond==='good'?'charge':cond==='lost'?'lost':'maint';
+ S.log.unshift([l.id,l.r.name,cond==='lost'?'Lost':'Returned, '+cond,late?R(late)+' late':'—',R(ref)+' refunded']);
+ o.className='msg';o.innerHTML=cond==='lost'?`${l.id} marked lost. Deposit kept, and the loss goes against the allowance.`:`${l.id} checked in. Refund ${R(ref)}. It now goes to ${l.st==='charge'?'recharging':'repair'}.`;
+ l.r=null;sel=null;S.stage=cond==='lost'?7:8;$('late').value=0;save();render()};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.id){sel=b.dataset.id;render()}
+ if(b.dataset.q){const l=S.L.find(x=>x.id===b.dataset.q);S.log.unshift([l.id,'—','Ready again','—','—']);l.st='avail';S.stage=10;save();render()}
+ if(b.dataset.d){$('util').value=b.dataset.d;calc()}});
+['days','mobile'].forEach(k=>$(k).oninput=quote);['late','cond'].forEach(k=>$(k).oninput=retQuote);$('util').oninput=$('run').oninput=calc;
+load();render();
+</script></body></html>
